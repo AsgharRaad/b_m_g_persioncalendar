@@ -7,30 +7,7 @@ import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.graphics.Typeface;
-import android.net.Uri;
-import android.os.Build;
-import android.preference.PreferenceManager;
-import android.support.annotation.IdRes;
-import android.support.annotation.RawRes;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceViewHolder;
-import android.text.SpannableString;
-import android.text.TextUtils;
-import android.text.style.RelativeSizeSpan;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.Spinner;
-import android.widget.TextView;
+iget.TextView;
 import android.widget.Toast;
 
 import com.azizhuss.arabicreshaper.ArabicShaping;
@@ -79,33 +56,7 @@ import calendar.PersianDate;
 
 import static com.shamim.farsi.Constants.AM_IN_PERSIAN;
 import static com.shamim.farsi.Constants.ARABIC_DIGITS;
-import static com.shamim.farsi.Constants.BLUE_THEME;
-import static com.shamim.farsi.Constants.BROADCAST_ALARM;
-import static com.shamim.farsi.Constants.BROADCAST_RESTART_APP;
-import static com.shamim.farsi.Constants.DARK_THEME;
-import static com.shamim.farsi.Constants.DAYS_ICONS;
-import static com.shamim.farsi.Constants.DAYS_ICONS_AR;
-import static com.shamim.farsi.Constants.DEFAULT_ALTITUDE;
-import static com.shamim.farsi.Constants.DEFAULT_APP_LANGUAGE;
-import static com.shamim.farsi.Constants.DEFAULT_ATHAN_VOLUME;
-import static com.shamim.farsi.Constants.DEFAULT_CITY;
-import static com.shamim.farsi.Constants.DEFAULT_IRAN_TIME;
-import static com.shamim.farsi.Constants.DEFAULT_ISLAMIC_OFFSET;
-import static com.shamim.farsi.Constants.DEFAULT_LATITUDE;
-import static com.shamim.farsi.Constants.DEFAULT_LONGITUDE;
-import static com.shamim.farsi.Constants.DEFAULT_NOTIFY_DATE;
-import static com.shamim.farsi.Constants.DEFAULT_PERSIAN_DIGITS;
-import static com.shamim.farsi.Constants.DEFAULT_PRAY_TIME_METHOD;
-import static com.shamim.farsi.Constants.DEFAULT_SELECTED_WIDGET_TEXT_COLOR;
-import static com.shamim.farsi.Constants.DEFAULT_WIDGET_CLOCK;
-import static com.shamim.farsi.Constants.DEFAULT_WIDGET_IN_24;
-import static com.shamim.farsi.Constants.FONT_PATH;
-import static com.shamim.farsi.Constants.GREEN_THEME;
-import static com.shamim.farsi.Constants.KEY_EXTRA_PRAYER_KEY;
-import static com.shamim.farsi.Constants.LIGHT_THEME;
-import static com.shamim.farsi.Constants.ORANGE_THEME;
-import static com.shamim.farsi.Constants.PERSIAN_COMMA;
-import static com.shamim.farsi.Constants.PERSIAN_DIGITS;
+m.farsi.Constants.PERSIAN_DIGITS;
 import static com.shamim.farsi.Constants.PM_IN_PERSIAN;
 import static com.shamim.farsi.Constants.PREF_ALTITUDE;
 import static com.shamim.farsi.Constants.PREF_APP_LANGUAGE;
@@ -176,152 +127,7 @@ public class Utils {
      * @param text Arabic string
      * @return Shaped text
      */
-    public String shape(String text) {
-        return (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB)
-                ? ArabicShaping.shape(text)
-                : text;
-    }
-
-    public String programVersion() {
-        try {
-            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-        } catch (NameNotFoundException e) {
-            Log.e(TAG, "Name not found on PersianCalendarUtils.programVersion");
-            return "";
-        }
-    }
-
-    private void initTypeface() {
-        if (typeface == null) {
-            typeface = Typeface.createFromAsset(context.getAssets(), FONT_PATH);
-        }
-    }
-
-    public void setFont(TextView textView) {
-        initTypeface();
-        textView.setTypeface(typeface);
-
-
-    }
-
-    public void setFontAndShape(TextView textView) {
-        setFont(textView);
-        textView.setText(shape(textView.getText().toString()));
-
-    }
-
-    public void setFontShapeAndGravity(TextView textView) {
-        setFontAndShape(textView);
-        textView.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
-    }
-
-    public void setFontAndShape(PreferenceViewHolder holder) {
-        // See android.support.v7.preference.Preference#onBindViewHolder
-        TextView titleView = (TextView) holder.findViewById(android.R.id.title);
-        if (titleView != null) {
-            setFontAndShape(titleView);
-        }
-        TextView summaryView = (TextView) holder.findViewById(android.R.id.summary);
-        if (summaryView != null) {
-            setFontAndShape(summaryView);
-        }
-    }
-
-    public void setActivityTitleAndSubtitle(Activity activity, String title, String subtitle) {
-        if (title == null || subtitle == null) {
-            return;
-        }
-        initTypeface();
-
-        //noinspection ConstantConditions
-        ActionBar supportActionBar = ((AppCompatActivity) activity).getSupportActionBar();
-
-        if (supportActionBar == null) {
-            return;
-        }
-
-        SpannableString titleSpan = new SpannableString(shape(title));
-        titleSpan.setSpan(new TypefaceSpan(typeface), 0, titleSpan.length(), 0);
-        titleSpan.setSpan(new RelativeSizeSpan(0.8f), 0, titleSpan.length(), 0);
-        supportActionBar.setTitle(titleSpan);
-
-        SpannableString subtitleSpan = new SpannableString(shape(subtitle));
-        subtitleSpan.setSpan(new TypefaceSpan(typeface), 0, subtitleSpan.length(), 0);
-        subtitleSpan.setSpan(new RelativeSizeSpan(0.8f), 0, subtitleSpan.length(), 0);
-        supportActionBar.setSubtitle(subtitleSpan);
-    }
-
-    public CalculationMethod getCalculationMethod() {
-        // We were using "Jafari" method but later found out Tehran is nearer to time.ir and others
-        // so switched to "Tehran" method as default calculation algorithm
-        return CalculationMethod.valueOf(prefs.getString(PREF_PRAY_TIME_METHOD,
-                DEFAULT_PRAY_TIME_METHOD));
-    }
-
-    public int getIslamicOffset() {
-        return Integer.parseInt(prefs.getString(
-                PREF_ISLAMIC_OFFSET,
-                DEFAULT_ISLAMIC_OFFSET).replace("+", ""));
-    }
-
-    public Coordinate getCoordinate() {
-        CityEntity cityEntity = getCityFromPreference();
-        if (cityEntity != null) {
-            return cityEntity.getCoordinate();
-        }
-
-        try {
-            Coordinate coord = new Coordinate(
-                    Double.parseDouble(prefs.getString(PREF_LATITUDE, DEFAULT_LATITUDE)),
-                    Double.parseDouble(prefs.getString(PREF_LONGITUDE, DEFAULT_LONGITUDE)),
-                    Double.parseDouble(prefs.getString(PREF_ALTITUDE, DEFAULT_ALTITUDE))
-            );
-
-            // If latitude or longitude is zero probably preference is not set yet
-            if (coord.getLatitude() == 0 && coord.getLongitude() == 0) {
-                return null;
-            }
-
-            return coord;
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    private char[] preferredDigits;
-    private boolean clockIn24;
-    public boolean iranTime;
-
-    public void updateStoredPreference() {
-        preferredDigits = isPersianDigitSelected()
-                ? PERSIAN_DIGITS
-                : ARABIC_DIGITS;
-
-        clockIn24 = prefs.getBoolean(PREF_WIDGET_IN_24, DEFAULT_WIDGET_IN_24);
-        iranTime = prefs.getBoolean(PREF_IRAN_TIME, DEFAULT_IRAN_TIME);
-    }
-
-    public boolean isPersianDigitSelected() {
-        return prefs.getBoolean(PREF_PERSIAN_DIGITS, DEFAULT_PERSIAN_DIGITS);
-    }
-
-
-    public void setTheme(Context context) {
-        String key = prefs.getString(PREF_THEME, "");
-
-        int theme = R.style.LightTheme; // default theme
-
-        if (key.equals(LIGHT_THEME)) {
-            theme = R.style.LightTheme;
-        } else if (key.equals(DARK_THEME)) {
-            theme = R.style.DarkTheme;
-        }else if (key.equals(GREEN_THEME)) {
-            theme = R.style.GreenTheme;
-        }else if (key.equals(RED_THEME)) {
-            theme = R.style.RedTheme;
-        }else if (key.equals(BLUE_THEME)) {
-            theme = R.style.BlueTheme;
-        }else if (key.equals(ORANGE_THEME)) {
+   
             theme = R.style.OrangeTheme;
         }
 
@@ -375,59 +181,6 @@ public class Utils {
     public String getNextOghatTime(Clock clock, boolean changeDate) {
         Coordinate coordinate = getCoordinate();
 
-        if (coordinate != null) {
-            if (prayTimesCalculator == null) {
-                prayTimesCalculator = new PrayTimesCalculator(getCalculationMethod());
-                changeDate = true;
-            }
-
-            if (changeDate) {
-                prayTimes = prayTimesCalculator.calculate(new Date(), coordinate);
-            }
-
-            if (prayTimes.get(PrayTime.FAJR).getInt() > clock.getInt()) {
-                return context.getString(R.string.azan1) + ": " + getPersianFormattedClock(prayTimes.get(PrayTime.FAJR));
-
-            } else if (prayTimes.get(PrayTime.SUNRISE).getInt() > clock.getInt()) {
-                return context.getString(R.string.aftab1) + ": " + getPersianFormattedClock(prayTimes.get(PrayTime.SUNRISE));
-
-            } else if (prayTimes.get(PrayTime.DHUHR).getInt() > clock.getInt()) {
-                return context.getString(R.string.azan2) + ": " + getPersianFormattedClock(prayTimes.get(PrayTime.DHUHR));
-
-            } else if (prayTimes.get(PrayTime.ASR).getInt() > clock.getInt()) {
-                return context.getString(R.string.azan3) + ": " + getPersianFormattedClock(prayTimes.get(PrayTime.ASR));
-
-            } else if (prayTimes.get(PrayTime.SUNSET).getInt() > clock.getInt()) {
-                return context.getString(R.string.aftab2) + ": " + getPersianFormattedClock(prayTimes.get(PrayTime.SUNSET));
-
-            } else if (prayTimes.get(PrayTime.MAGHRIB).getInt() > clock.getInt()) {
-                return context.getString(R.string.azan4) + ": " + getPersianFormattedClock(prayTimes.get(PrayTime.MAGHRIB));
-
-            } else if (prayTimes.get(PrayTime.ISHA).getInt() > clock.getInt()) {
-                return context.getString(R.string.azan5) + ": " + getPersianFormattedClock(prayTimes.get(PrayTime.ISHA));
-
-            } else if (prayTimes.get(PrayTime.MIDNIGHT).getInt() > clock.getInt()) {
-                return context.getString(R.string.aftab3) + ": " + getPersianFormattedClock(prayTimes.get(PrayTime.MIDNIGHT));
-
-            } else {
-                return context.getString(R.string.azan1) + ": " + getPersianFormattedClock(prayTimes.get(PrayTime.FAJR)); //this is today & not tomorrow
-            }
-
-        } else return null;
-    }
-
-    public String getPersianFormattedClock(Clock clock) {
-        String timeText = null;
-
-        int hour = clock.getHour();
-        if (!clockIn24) {
-            if (hour >= 12) {
-                timeText = PM_IN_PERSIAN;
-                hour -= 12;
-            } else {
-                timeText = AM_IN_PERSIAN;
-            }
-        }
 
         String result = clockToString(hour, clock.getMinute());
         if (!clockIn24) {
@@ -640,56 +393,6 @@ public class Utils {
             }
         });
 
-        return Arrays.asList(cities);
-    }
-
-    private CityEntity getCityFromPreference() {
-        String key = prefs.getString(PREF_SELECTED_LOCATION, "");
-
-        if (TextUtils.isEmpty(key) || key.equals(DEFAULT_CITY))
-            return null;
-
-        if (key.equals(cachedCityKey))
-            return cachedCity;
-
-        // cache last query even if no city available under the key, useful in case invalid
-        // value is somehow inserted on the preference
-        cachedCityKey = key;
-
-        for (CityEntity cityEntity : getAllCities(false))
-            if (cityEntity.getKey().equals(key))
-                return cachedCity = cityEntity;
-
-        return cachedCity = null;
-    }
-
-    public String formatCoordinate(Coordinate coordinate, String separator) {
-        return String.format(Locale.getDefault(), "%s: %.4f%s%s: %.4f",
-                context.getString(R.string.latitude), coordinate.getLatitude(), separator,
-                context.getString(R.string.longitude), coordinate.getLongitude());
-    }
-
-    public String getCityName(boolean fallbackToCoord) {
-        CityEntity cityEntity = getCityFromPreference();
-        if (cityEntity != null)
-            return getAppLanguage().equals("en") ? cityEntity.getEn() : cityEntity.getFa();
-
-        String geocodedCityName = prefs.getString(PREF_GEOCODED_CITYNAME, "");
-        if (!TextUtils.isEmpty(geocodedCityName))
-            return geocodedCityName;
-
-        if (fallbackToCoord) {
-            Coordinate coordinate = getCoordinate();
-            if (coordinate != null)
-                return formatCoordinate(coordinate, PERSIAN_COMMA + " ");
-        }
-
-        return "";
-    }
-
-    private void loadEvents() {
-        List<EventEntity> events = new ArrayList<>();
-        try {
             JSONArray days = new JSONObject(readRawResource(R.raw.events)).getJSONArray("events");
 
             int length = days.length();
@@ -789,24 +492,6 @@ public class Utils {
         return result;
     }
 
-    public String getEventsTitle(PersianDate day, boolean holiday) {
-        String titles = "";
-        boolean first = true;
-        List<EventEntity> dayEvents = getEvents(day);
-
-        for (EventEntity event : dayEvents) {
-            if (event.isHoliday() == holiday) {
-                if (first) {
-                    first = false;
-
-                } else {
-                    titles = titles + "\n";
-                }
-                titles = titles + event.getTitle();
-            }
-        }
-        return titles;
-    }
 
     public void loadApp() {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -884,29 +569,6 @@ public class Utils {
             athanGap = 0;
         }
 
-        Calendar triggerTime = Calendar.getInstance();
-        triggerTime.setTimeInMillis(timeInMillis - TimeUnit.SECONDS.toMillis(athanGap));
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-        // don't set an alarm in the past
-        if (!triggerTime.before(Calendar.getInstance())) {
-            Log.d(TAG, "setting alarm for: " + triggerTime.getTime());
-
-            Intent intent = new Intent(context, BroadcastReceivers.class);
-            intent.setAction(BROADCAST_ALARM);
-            intent.putExtra(KEY_EXTRA_PRAYER_KEY, prayTime.name());
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, 0);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                SetExactAlarm.setExactAlarm(alarmManager,
-                        AlarmManager.RTC_WAKEUP, triggerTime.getTimeInMillis(), pendingIntent);
-            } else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime.getTimeInMillis(), pendingIntent);
-            }
-        }
-    }
-
-    private static class SetExactAlarm {
         @TargetApi(Build.VERSION_CODES.KITKAT)
         public static void setExactAlarm(AlarmManager alarmManager,
                                          int type, long triggerAtMillis, PendingIntent pendingIntent) {
@@ -942,42 +604,7 @@ public class Utils {
         else if (lang.equals("ps"))
             messagesFile = R.raw.messages_ps;
         else
-            messagesFile = R.raw.messages_fa;
-
-        persianMonths = new String[12];
-        islamicMonths = new String[12];
-        gregorianMonths = new String[12];
-        weekDays = new String[7];
-
-        try {
-            JSONObject messages = new JSONObject(readRawResource(messagesFile));
-
-            JSONArray persianMonthsArray = messages.getJSONArray("PersianCalendarMonths");
-            for (int i = 0; i < 12; ++i)
-                persianMonths[i] = persianMonthsArray.getString(i);
-
-            JSONArray islamicMonthsArray = messages.getJSONArray("IslamicCalendarMonths");
-            for (int i = 0; i < 12; ++i)
-                islamicMonths[i] = islamicMonthsArray.getString(i);
-
-            JSONArray gregorianMonthsArray = messages.getJSONArray("GregorianCalendarMonths");
-            for (int i = 0; i < 12; ++i)
-                gregorianMonths[i] = gregorianMonthsArray.getString(i);
-
-            JSONArray weekDaysArray = messages.getJSONArray("WeekDays");
-            for (int i = 0; i < 7; ++i)
-                weekDays[i] = weekDaysArray.getString(i);
-
-        } catch (JSONException e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
-
-    public void copyToClipboard(View view) {
-        // if it is older than this, the view is also shaped which is not good for copying, so just
-        // nvm about backup solution for older Androids
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-            CharSequence text = ((TextView) view).getText();
+           
             CopyToClipboard.copyToClipboard(text, context);
             quickToast("«" + text + "»\n" + context.getString(R.string.date_copied_clipboard));
         }
@@ -995,26 +622,7 @@ public class Utils {
         int month = getToday().getMonth();
 
         if (month < 4) {
-            return SeasonEnum.SPRING;
-
-        } else if (month < 7) {
-            return SeasonEnum.SUMMER;
-
-        } else if (month < 10) {
-            return SeasonEnum.FALL;
-
-        } else {
-            return SeasonEnum.WINTER;
-        }
-    }
-
-    public List<DayEntity> getDays(int offset) {
-        List<DayEntity> days = new ArrayList<>();
-        PersianDate persianDate = getToday();
-        int month = persianDate.getMonth() - offset;
-        month -= 1;
-        int year = persianDate.getYear();
-
+    
         year = year + (month / 12);
         month = month % 12;
         if (month < 0) {
@@ -1028,28 +636,6 @@ public class Utils {
 
         int dayOfWeek = DateConverter.persianToCivil(persianDate).getDayOfWeek() % 7;
 
-        try {
-            PersianDate today = getToday();
-            for (int i = 1; i <= 31; i++) {
-                persianDate.setDayOfMonth(i);
-
-                DayEntity dayEntity = new DayEntity();
-                dayEntity.setNum(formatNumber(i));
-                dayEntity.setDayOfWeek(dayOfWeek);
-
-                if (dayOfWeek == 6 || !TextUtils.isEmpty(getEventsTitle(persianDate, true))) {
-                    dayEntity.setHoliday(true);
-                }
-
-                if (getEvents(persianDate).size() > 0) {
-                    dayEntity.setEvent(true);
-                }
-
-                dayEntity.setPersianDate(persianDate.clone());
-
-                if (persianDate.equals(today)) {
-                    dayEntity.setToday(true);
-                }
 
                 days.add(dayEntity);
                 dayOfWeek++;
@@ -1064,71 +650,6 @@ public class Utils {
         return days;
     }
 
-    // based on R.array.calendar_type order
-    public CalendarTypeEnum calendarTypeFromPosition(int position) {
-        if (position == 0)
-            return CalendarTypeEnum.SHAMSI;
-        else if (position == 1)
-            return CalendarTypeEnum.ISLAMIC;
-        else
-            return CalendarTypeEnum.GREGORIAN;
-    }
-
-    @SuppressLint("ResourceType")
-    @IdRes
-    public final static int DROPDOWN_LAYOUT = R.layout.select_dialog_item;
-
-    public int fillYearMonthDaySpinners(Context context, Spinner calendarTypeSpinner,
-                                        Spinner yearSpinner, Spinner monthSpinner,
-                                        Spinner daySpinner) {
-        AbstractDate date;
-        PersianDate newDatePersian = getToday();
-        CivilDate newDateCivil = DateConverter.persianToCivil(newDatePersian);
-        IslamicDate newDateIslamic = DateConverter.persianToIslamic(newDatePersian);
-
-        date = newDateCivil;
-        switch (calendarTypeFromPosition(calendarTypeSpinner.getSelectedItemPosition())) {
-            case GREGORIAN:
-                date = newDateCivil;
-                break;
-
-            case ISLAMIC:
-                date = newDateIslamic;
-                break;
-
-            case SHAMSI:
-                date = newDatePersian;
-                break;
-        }
-
-        // years spinner init.
-        String[] years = new String[200];
-        int startingYearOnYearSpinner = date.getYear() - years.length / 2;
-        for (int i = 0; i < years.length; ++i) {
-            years[i] = formatNumber(i + startingYearOnYearSpinner);
-        }
-        yearSpinner.setAdapter(new ShapedArrayAdapter<>(context, DROPDOWN_LAYOUT, years));
-        yearSpinner.setSelection(years.length / 2);
-        //
-
-        // month spinner init.
-        String[] months = monthsNamesOfCalendar(date);
-        for (int i = 0; i < months.length; ++i) {
-            months[i] = months[i] + " / " + formatNumber(i + 1);
-        }
-        monthSpinner.setAdapter(new ShapedArrayAdapter<>(context, DROPDOWN_LAYOUT, months));
-        monthSpinner.setSelection(date.getMonth() - 1);
-        //
-
-        // days spinner init.
-        String[] days = new String[31];
-        for (int i = 0; i < days.length; ++i) {
-            days[i] = formatNumber(i + 1);
-        }
-        daySpinner.setAdapter(new ShapedArrayAdapter<>(context, DROPDOWN_LAYOUT, days));
-        daySpinner.setSelection(date.getDayOfMonth() - 1);
-        //
-
-        return startingYearOnYearSpinner;
+    /
     }
 }
