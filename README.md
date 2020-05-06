@@ -45,7 +45,7 @@
  <pre></pre></h5><hr/>
  <h3 align = "right" dir = "rtl">دریافت برنامه</h3><hr/>
  <ul align = "right" dir = "rtl">
-    <li> <a href="https://cafebazaar.ir/app/com.shamim.farsi" ><img src = "https://i.pinimg.com/originals/8a/09/80/8a0980b5f8379c08f545280c1944df40.jpg" width ="50px" height = "50px" alt = "B"/>بزودی در کافه بازار</a> </li>
+    <li> <a href="https://cafebazaar.ir/app/com.shamim.farsi" ><img src = "https://i.pinimg.com/originals/8a/09/80/8a0980b5f8379c08f545280c1944df40.jpg" width ="50px" height = "50px" alt = "B"/>دریافت از کافه بازار</a> </li>
      <li> <a href="https://myket.ir/app/com.shamim.farsi" ><img src = "https://b2n.ir/346002" width ="50px" height = "50px" alt = "Myket"/>بزودی در مایکت</a></li>
  <li> <a href="https://play.google.com/store/apps/details?id=com.shamim.farsi" ><img src = "https://b2n.ir/776804" width ="50px" height = "50px" alt = "Google Play"/>بزودی در گوگل پلی</a></li>
     <li> <a href="https://github.com/AsgharRaad/persian-calendar-99_400.git" > <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQcnEdS7JCEI07Q35KEi3LX43euhh9xbV_dm3Glsyu60q7LUK88&usqp=CAU" width ="45px" height = "45px" alt = "G" />سورس برنامه در گیت هاب</a> </li>
